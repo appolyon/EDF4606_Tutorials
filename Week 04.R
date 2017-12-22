@@ -13,8 +13,10 @@
 # http://rfaqs.com/tag/mctest-package # good outline of mctest package
 # https://www.r-bloggers.com/multicollinearity-in-r/ # testing multicolinearity
 # https://www.statmethods.net/stats/rdiagnostics.html # good overview of regression diagnostics
+# https://www.r-bloggers.com/outlier-detection-with-mahalanobis-distance/ # Mahalanobis distance
+# http://r-statistics.co/Outlier-Treatment-With-R.html # general information about R and detecting outliers
+# https://eurekastatistics.com/using-mahalanobis-distance-to-find-outliers/ # another page on Mahalanobis
 
-  
 
 # Installation of packages that will be used through the tutorial
 install.packages("psych", dependencies = TRUE)
@@ -79,7 +81,35 @@ summary(fit)
 vif(fit)
 sqrt(vif(fit)) > 2
 
-# More detailed colinearity analysis using mctest package (omcdiag and imcdiag functions)
+# More detailed colinearity analysis using mctest package (omcdiag and imcdiag functions) to get VIF and Tolerance statistics
 
 omcdiag(x = predVariables[,-1], y = predVariables$tpstress) # overall multicolinearity statistics
 imcdiag(x = predVariables[,-1], y = predVariables$tpstress) # individual multicolinearity statistics
+
+# Checking for outliers (both univariate and multivariate)
+# Univariate approach 
+# Charts indicate that there are some outliers across the variables
+
+# tpstress
+outlier_values <- boxplot.stats(predVariables$tpstress)$out
+boxplot(predVariables$tpstress, main="Total Perceived Stress", boxwex=0.1)
+mtext(paste("Outliers: ", paste(outlier_values, collapse=", ")), cex=0.6)
+
+# tmast
+outlier_values <- boxplot.stats(predVariables$tmast)$out
+boxplot(predVariables$tmast, main="Total Mastery", boxwex=0.1)
+mtext(paste("Outliers: ", paste(outlier_values, collapse=", ")), cex=0.6)
+
+# tpcoiss
+outlier_values <- boxplot.stats(predVariables$tpcoiss)$out
+boxplot(predVariables$tpcoiss, main="PCOISS", boxwex=0.1)
+mtext(paste("Outliers: ", paste(outlier_values, collapse=", ")), cex=0.6)
+
+# Multivariate approach
+influence.measures(fit)
+cooksd <-cooks.distance(fit)
+
+# Mahalanobis Distance
+maha <- predVariables[,-1] # Remove the DV
+
+# unfinished
