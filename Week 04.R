@@ -111,5 +111,8 @@ cooksd <-cooks.distance(fit)
 
 # Mahalanobis Distance
 maha <- predVariables[,-1] # Remove the DV
-
+Sx <- cov(maha)
+mahalanobis(maha, colMeans(maha), Sx)
+summary(maha)
+summary(predVariables)
 # unfinished
